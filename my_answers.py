@@ -12,10 +12,18 @@ def window_transform_series(series, window_size):
     # containers for input/output pairs
     X = []
     y = []
+    
+    # slide window up to the end of series
+    for n in range(0,(len(series)-window_size+1)):
+        X.append(series[n:(n+window_size)])
+        n+=1
+    # output for each window sequence
+    y = series[window_size:]
 
     # reshape each 
     X = np.asarray(X)
-    X.shape = (np.shape(X)[0:2])
+    #X.shape = (np.shape(X)[0:2])
+    
     y = np.asarray(y)
     y.shape = (len(y),1)
 
