@@ -14,7 +14,7 @@ def window_transform_series(series, window_size):
     y = []
     
     # slide window up to the end of series
-    for n in range(0,(len(series)-window_size+1)):
+    for n in range(0,(len(series)-window_size)):
         X.append(series[n:(n+window_size)])
         n+=1
     # output for each window sequence
@@ -25,14 +25,16 @@ def window_transform_series(series, window_size):
     #X.shape = (np.shape(X)[0:2])
     
     y = np.asarray(y)
-    y.shape = (len(y),1)
+    #y.shape = (len(y),1)
 
     return X,y
 
 # TODO: build an RNN to perform regression on our time series input/output data
 def build_part1_RNN(window_size):
-    pass
-
+    model = Sequential()
+    model.add(LSTM(5, input_shape=(window_size,1)))
+    model.add(Dense(1, activation='linear'))
+    return model
 
 ### TODO: return the text input with only ascii lowercase and the punctuation given below included.
 def cleaned_text(text):
