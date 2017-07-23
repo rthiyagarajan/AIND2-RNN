@@ -12,20 +12,14 @@ def window_transform_series(series, window_size):
     # containers for input/output pairs
     X = []
     y = []
-    
-    # slide window up to the end of series
+    # Final sequence stops with last complete window_size and 1 char output
     for n in range(0,(len(series)-window_size)):
         X.append(series[n:(n+window_size)])
-        n+=1
     # output for each window sequence
     y = series[window_size:]
-
     # reshape each 
-    X = np.asarray(X)
-    #X.shape = (np.shape(X)[0:2])
-    
+    X = np.asarray(X)  
     y = np.asarray(y)
-    #y.shape = (len(y),1)
 
     return X,y
 
@@ -36,21 +30,37 @@ def build_part1_RNN(window_size):
     model.add(Dense(1, activation='linear'))
     return model
 
-### TODO: return the text input with only ascii lowercase and the punctuation given below included.
+### TODO: return the text input with only ascii lowercase and 
+#   the punctuation given below included.
 def cleaned_text(text):
+    import string
+    alphabet = string.ascii_lowercase + ' '
     punctuation = ['!', ',', '.', ':', ';', '?']
-
+    keepchars = alphabet + ''.join(punctuation)
+    #convert to list and replace unwanted chars with blanks
+    listtext = list(text)
+    for i,char in enumerate(listtext):
+        if char not in keepchars:
+            listtext[i] = ' '
+    text = ''.join(listtext)
     return text
 
-### TODO: fill out the function below that transforms the input text and window-size into a set of input/output pairs for use with our RNN model
+### TODO: fill out the function below that transforms the input text and 
+#   window-size into a set of input/output pairs for use with our RNN model
 def window_transform_text(text, window_size, step_size):
     # containers for input/output pairs
     inputs = []
     outputs = []
-
+    for n in range(0,(len(text)-window_size),step_size):
+        inputs.append(text[n:(n+window_size)]) #slice range ends one before 
+        outputs.append(text[n+window_size])
     return inputs,outputs
 
 # TODO build the required RNN model: 
 # a single LSTM hidden layer with softmax activation, categorical_crossentropy loss 
 def build_part2_RNN(window_size, num_chars):
-    pass
+    model = Sequential()
+    model.add(LSTM(200, input_shape=(window_size,num_chars)))
+    model.add(Dense(num_chars, activation='linear'))
+    model.add(Dense(num_chars,activation='softmax'))
+    return model
